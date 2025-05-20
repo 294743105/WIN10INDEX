@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#19191f">
+    <title>Windows 10 - VVX的个人主页</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div class="desktop">
+        <!-- 桌面图标 -->
+        <div class="desktop-icons">
+            <div class="icon" data-url="https://blog.jiuyou.eu.org">
+                <i class="fa fa-newspaper-o"></i>
+                <span>个人博客</span>
+                <div class="tooltip">分享资源和教程</div>
+            </div>
+            <div class="icon" data-url="https://r.jiuyou.eu.org">
+                <i class="fa fa-book"></i>
+                <span>备用博客1</span>
+                <div class="tooltip">随意记录</div>
+            </div>
+            <div class="icon" data-url="https://web.jiuyou.eu.org/">
+                <i class="fa fa-bookmark"></i>
+                <span>备用博客2</span>
+                <div class="tooltip">记录生活和分享生活</div>
+            </div>
+            <div class="icon" data-url="https://github.com/294743105/">
+                <i class="fa fa-github"></i>
+                <span>GitHub</span>
+                <div class="tooltip">代码仓库和开源项目</div>
+            </div>
+            <div class="icon" data-url="https://a.jiuyou.eu.org/">
+                <i class="fa fa-hdd-o"></i>
+                <span>个人网盘</span>
+                <div class="tooltip">分享实用和有趣的小玩意</div>
+            </div>
+            <div class="icon" data-url="https://p.jiuyou.eu.org">
+                <i class="fa fa-cloud"></i>
+                <span>备用网盘</span>
+                <div class="tooltip">资源文件和共享内容</div>
+            </div>
+            <div class="icon" data-url="https://h.jiuyou.eu.org">
+                <i class="fa fa-paint-brush"></i>
+                <span>在线画板</span>
+                <div class="tooltip">涂鸦和留言</div>
+            </div>
+            <div class="icon" data-url="https://n.jiuyou.eu.org">
+                <i class="fa fa-commenting-o"></i>
+                <span>AI大模型</span>
+                <div class="tooltip">N多大模型聊天</div>
+            </div>
+            <div class="icon" data-url="https://img.jiuyou.eu.org">
+                <i class="fa fa-image"></i>
+                <span>图库展示</span>
+                <div class="tooltip">收藏的一些图库</div>
+            </div>
+            <div class="icon" data-url="https://c.jiuyou.eu.org">
+                <i class="fa fa-comment"></i>
+                <span>漂流瓶</span>
+                <div class="tooltip">聊天和交友吐槽</div>
+            </div>
+        </div>
+
+        <!-- 任务栏 -->
+        <div class="taskbar">
+            <div class="start-button">
+                <i class="fa fa-windows"></i>
+            </div>
+            <div class="search-box">
+                <i class="fa fa-search"></i>
+                <input type="text" placeholder="在此键入搜索内容">
+            </div>
+            <div class="taskbar-icons">
+                <i class="fa fa-edge"></i>
+                <i class="fa fa-folder"></i>
+                <i class="fa fa-store"></i>
+            </div>
+            <div class="system-tray">
+                <i class="fa fa-volume-up"></i>
+                <i class="fa fa-wifi"></i>
+                <i class="fa fa-battery-full"></i>
+                <div class="time-date">
+                    <span id="current-time">00:00</span>
+                    <span id="current-date">2023/01/01</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 开始菜单 -->
+    <div class="start-menu" id="startMenu">
+        <div class="start-header">
+            <img class="user-avatar" src="https://r2.jiuyou.eu.org/blog-jiuyou-eu-org/production/images/channel-e3cd09d0fcbacd3c3424b985a7b764b2.PNG" alt="用户头像">
+            <span>VVX</span>
+        </div>
+        <div class="app-list">
+            <div class="app-item" id="settingsBtn">
+                <i class="fa fa-cog"></i>
+                <span>设置</span>
+            </div>
+            <div class="app-item">
+                <i class="fa fa-power-off"></i>
+                <span>关机</span>
+            </div>
+            <div class="app-item">
+                <i class="fa fa-repeat"></i>
+                <span>重启</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 设置面板 -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <i class="fa fa-arrow-left" id="backBtn"></i>
+            <span>设置</span>
+            <i class="fa fa-times" id="closeSettings"></i>
+        </div>
+        <div class="settings-content">
+            <div class="settings-section">
+                <h3>个性化</h3>
+                <div class="setting-item">
+                    <span>背景图片</span>
+                    <button id="changeBackgroundBtn">更换背景</button>
+                </div>
+                <div class="setting-item">
+                    <span>主题颜色</span>
+                    <div class="color-options">
+                        <div class="color-option" data-color="#0078d7" style="background-color: #0078d7;"></div>
+                        <div class="color-option" data-color="#e81123" style="background-color: #e81123;"></div>
+                        <div class="color-option" data-color="#10893e" style="background-color: #10893e;"></div>
+                        <div class="color-option" data-color="#ffb900" style="background-color: #ffb900;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h3>系统</h3>
+                <div class="setting-item">
+                    <span>透明效果</span>
+                    <label class="switch">
+                        <input type="checkbox" id="transparencyToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span>动画效果</span>
+                    <label class="switch">
+                        <input type="checkbox" id="animationToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span>移动设备优化</span>
+                    <label class="switch">
+                        <input type="checkbox" id="mobileOptimizeToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h3>关于</h3>
+                <div class="about-info">
+                    <p>Windows 10 风格个人主页</p>
+                    <p>版本号：1.0.0</p>
+                    <p>作者：VVX</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 移动设备指引蒙层 -->
+    <div class="mobile-guide" id="mobileGuide">
+        <div class="guide-content">
+            <h3>移动设备使用指南</h3>
+            <ul>
+                <li><i class="fa fa-hand-pointer-o"></i> 点击图标访问链接</li>
+                <li><i class="fa fa-hand-rock-o"></i> 长按图标查看描述</li>
+                <li><i class="fa fa-arrows"></i> 拖动图标自定义位置</li>
+                <li><i class="fa fa-expand"></i> 双指缩放调整视图</li>
+                <li><i class="fa fa-th-large"></i> 长按桌面打开菜单</li>
+            </ul>
+            <button id="closeGuide">我知道了</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html> 
