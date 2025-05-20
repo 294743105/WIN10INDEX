@@ -122,11 +122,16 @@ document.addEventListener('DOMContentLoaded', function() {
         startMenu.classList.toggle('active');
     });
     
-    // 点击桌面空白处关闭开始菜单
+    // 点击桌面空白处关闭开始菜单和日历面板
     document.querySelector('.desktop').addEventListener('click', function(event) {
         if (!startMenu.contains(event.target) && 
             !startButton.contains(event.target)) {
             startMenu.classList.remove('active');
+        }
+        
+        if (!calendarPanel.contains(event.target) && 
+            !document.querySelector('.time-date').contains(event.target)) {
+            calendarPanel.classList.remove('active');
         }
     });
     
@@ -206,10 +211,117 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // 系统托盘项目点击事件
+    const calendarPanel = document.getElementById('calendarPanel');
     document.querySelector('.time-date').addEventListener('click', function() {
-        // 注释掉弹窗功能
-        // alert('时间和日期设置');
+        calendarPanel.classList.toggle('active');
+        startMenu.classList.remove('active');
+        settingsPanel.classList.remove('active');
+        
+        // 初始化或更新日历
+        updateCalendar();
+        // 更新世界时钟
+        updateWorldClock();
     });
+    
+    // 关闭日历按钮
+    document.getElementById('closeCalendar').addEventListener('click', function() {
+        calendarPanel.classList.remove('active');
+    });
+    
+    // 日历控制按钮
+    let currentDate = new Date();
+    
+    document.getElementById('prevMonth').addEventListener('click', function() {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        updateCalendar();
+    });
+    
+    document.getElementById('nextMonth').addEventListener('click', function() {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        updateCalendar();
+    });
+    
+    // 更新日历
+    function updateCalendar() {
+        const calendarDays = document.getElementById('calendarDays');
+        const monthYearElem = document.getElementById('calendar-month-year');
+        
+        // 清空日历
+        calendarDays.innerHTML = '';
+        
+        // 更新月份和年份显示
+        const monthNames = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+        monthYearElem.textContent = `${currentDate.getFullYear()}年${monthNames[currentDate.getMonth()]}`;
+        
+        // 生成日历数据
+        const today = new Date();
+        const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        
+        // 获取月初是星期几
+        let firstDayOfWeek = firstDay.getDay();
+        
+        // 上个月的日期
+        const prevMonthLastDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
+        for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+            const dayElem = document.createElement('div');
+            dayElem.classList.add('calendar-day', 'other-month');
+            dayElem.textContent = prevMonthLastDay - i;
+            calendarDays.appendChild(dayElem);
+        }
+        
+        // 当前月的日期
+        for (let i = 1; i <= lastDay.getDate(); i++) {
+            const dayElem = document.createElement('div');
+            dayElem.classList.add('calendar-day');
+            dayElem.textContent = i;
+            
+            // 判断是否是今天
+            if (currentDate.getFullYear() === today.getFullYear() && 
+                currentDate.getMonth() === today.getMonth() && 
+                i === today.getDate()) {
+                dayElem.classList.add('today');
+            }
+            
+            calendarDays.appendChild(dayElem);
+        }
+        
+        // 下个月的日期
+        const remainingCells = 42 - (firstDayOfWeek + lastDay.getDate());
+        for (let i = 1; i <= remainingCells; i++) {
+            const dayElem = document.createElement('div');
+            dayElem.classList.add('calendar-day', 'other-month');
+            dayElem.textContent = i;
+            calendarDays.appendChild(dayElem);
+        }
+    }
+    
+    // 更新世界时钟
+    function updateWorldClock() {
+        const timeElements = document.querySelectorAll('.world-clock .time');
+        
+        timeElements.forEach(elem => {
+            const timezone = elem.getAttribute('data-timezone');
+            try {
+                const time = new Date().toLocaleTimeString('zh-CN', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    timeZone: timezone,
+                    hour12: false
+                });
+                elem.textContent = time;
+            } catch (e) {
+                elem.textContent = '--:--';
+            }
+        });
+    }
+    
+    // 每分钟更新世界时钟
+    setInterval(() => {
+        if (calendarPanel.classList.contains('active')) {
+            updateWorldClock();
+        }
+    }, 60000);
     
     // 添加搜索框功能
     const searchBox = document.querySelector('.search-box input');

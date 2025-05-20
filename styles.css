@@ -797,4 +797,123 @@ body.disable-mobile-optimize .start-button {
 
 body.disable-mobile-optimize .search-box {
     display: flex !important;
+}
+
+/* 日历和世界时钟面板 */
+.calendar-panel {
+    position: fixed;
+    bottom: 40px;
+    right: 0;
+    width: 350px;
+    background-color: rgba(25, 25, 35, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+    color: white;
+    padding: 15px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    z-index: 999;
+    display: none;
+}
+
+.calendar-panel.active {
+    transform: translateY(0);
+    display: block;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.panel-controls {
+    display: flex;
+    align-items: center;
+}
+
+.panel-controls i {
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: background-color 0.2s;
+    border-radius: 4px;
+}
+
+.panel-controls i:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.calendar-container {
+    margin-bottom: 20px;
+}
+
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 10px;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-day {
+    text-align: center;
+    padding: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 14px;
+}
+
+.calendar-day:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.calendar-day.today {
+    background-color: var(--theme-color, #19191f);
+}
+
+.calendar-day.other-month {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.world-clock {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 15px;
+}
+
+.world-clock h4 {
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.clock-list {
+    display: grid;
+    gap: 10px;
+}
+
+.clock-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.location {
+    font-size: 14px;
+}
+
+.time {
+    font-size: 14px;
 } 
