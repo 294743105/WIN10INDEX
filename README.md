@@ -4,7 +4,7 @@
 
 ## 功能特点
 
-- 逼真的Windows 10桌面界面
+- Windows 10桌面界面
 - 可点击的桌面图标，链接到您的各个网站
 - 功能齐全的任务栏，包括开始菜单
 - 搜索框（使用Bing搜索）
@@ -17,7 +17,7 @@
 
 ### 方法一：使用Cloudflare Pages部署
 
-1. 首先在GitHub上创建一个新仓库，并上传本项目的所有文件
+1. 右上角fork本项目
 
 2. 登录您的Cloudflare账户 (https://dash.cloudflare.com/)
 
