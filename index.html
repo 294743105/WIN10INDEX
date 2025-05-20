@@ -103,6 +103,10 @@
                 <i class="fa fa-cog"></i>
                 <span>设置</span>
             </div>
+            <div class="app-item" id="cmdBtn">
+                <i class="fa fa-terminal"></i>
+                <span>命令提示符</span>
+            </div>
             <div class="app-item">
                 <i class="fa fa-power-off"></i>
                 <span>关机</span>
@@ -232,6 +236,33 @@
                     <div class="location">东京</div>
                     <div class="time" data-timezone="Asia/Tokyo">--:--</div>
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 命令提示符终端窗口 -->
+    <div class="cmd-window" id="cmdWindow">
+        <div class="window-header">
+            <div class="window-title">
+                <i class="fa fa-terminal"></i>
+                <span>命令提示符</span>
+            </div>
+            <div class="window-controls">
+                <i class="fa fa-minus" id="minimizeCmd"></i>
+                <i class="fa fa-expand" id="maximizeCmd"></i>
+                <i class="fa fa-times" id="closeCmd"></i>
+            </div>
+        </div>
+        <div class="cmd-content" id="cmdContent">
+            <div class="cmd-output" id="cmdOutput">
+                <div>Microsoft Windows [版本 10.0.19045]</div>
+                <div>(c) Microsoft Corporation。保留所有权利。</div>
+                <div>&nbsp;</div>
+                
+            </div>
+            <div class="cmd-input-line">
+                <span class="cmd-prompt" id="cmdPrompt">C:\Users\vvx></span>
+                <input type="text" id="cmdInput" autofocus spellcheck="false">
             </div>
         </div>
     </div>

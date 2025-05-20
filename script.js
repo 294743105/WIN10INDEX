@@ -850,4 +850,400 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 300);
     });
+
+    // 命令提示符功能
+    const cmdWindow = document.getElementById('cmdWindow');
+    const cmdBtn = document.getElementById('cmdBtn');
+    const closeCmd = document.getElementById('closeCmd');
+    const minimizeCmd = document.getElementById('minimizeCmd');
+    const maximizeCmd = document.getElementById('maximizeCmd');
+    const cmdOutput = document.getElementById('cmdOutput');
+    const cmdInput = document.getElementById('cmdInput');
+    const cmdPrompt = document.getElementById('cmdPrompt');
+    
+    // 当前目录路径
+    let currentDir = 'C:\\Users\\user';
+    
+    // 命令历史记录
+    let commandHistory = [];
+    let historyIndex = -1;
+    
+    // 打开命令提示符
+    cmdBtn.addEventListener('click', function() {
+        cmdWindow.classList.add('active');
+        startMenu.classList.remove('active');
+        cmdInput.focus();
+    });
+    
+    // 关闭命令提示符
+    closeCmd.addEventListener('click', function() {
+        cmdWindow.classList.remove('active');
+    });
+    
+    // 最小化命令提示符（模拟）
+    minimizeCmd.addEventListener('click', function() {
+        cmdWindow.classList.remove('active');
+    });
+    
+    // 最大化/还原命令提示符
+    maximizeCmd.addEventListener('click', function() {
+        cmdWindow.classList.toggle('maximized');
+        if (cmdWindow.classList.contains('maximized')) {
+            maximizeCmd.classList.remove('fa-expand');
+            maximizeCmd.classList.add('fa-compress');
+        } else {
+            maximizeCmd.classList.remove('fa-compress');
+            maximizeCmd.classList.add('fa-expand');
+        }
+    });
+    
+    // 命令处理
+    cmdInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const command = this.value.trim();
+            
+            if (command) {
+                // 添加到历史记录
+                commandHistory.push(command);
+                historyIndex = commandHistory.length;
+                
+                // 显示命令
+                appendOutput(`${cmdPrompt.textContent} ${command}`);
+                
+                // 处理命令
+                processCommand(command);
+                
+                // 清空输入
+                this.value = '';
+            } else {
+                // 空命令就显示新的提示符
+                appendOutput(cmdPrompt.textContent);
+            }
+            
+            // 滚动到底部
+            cmdContent.scrollTop = cmdContent.scrollHeight;
+        }
+        else if (e.key === 'ArrowUp') {
+            // 历史命令导航 - 上一个
+            e.preventDefault();
+            if (historyIndex > 0) {
+                historyIndex--;
+                this.value = commandHistory[historyIndex];
+                
+                // 将光标移到末尾
+                setTimeout(() => {
+                    this.selectionStart = this.selectionEnd = this.value.length;
+                }, 0);
+            }
+        }
+        else if (e.key === 'ArrowDown') {
+            // 历史命令导航 - 下一个
+            e.preventDefault();
+            if (historyIndex < commandHistory.length - 1) {
+                historyIndex++;
+                this.value = commandHistory[historyIndex];
+            } else {
+                historyIndex = commandHistory.length;
+                this.value = '';
+            }
+        }
+        else if (e.key === 'Tab') {
+            // 阻止Tab默认行为（焦点移动）
+            e.preventDefault();
+            // 这里可以实现自动补全功能，但简化起见，暂不实现
+        }
+    });
+    
+    // 输出文本到终端
+    function appendOutput(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        cmdOutput.appendChild(div);
+    }
+    
+    // 处理命令
+    function processCommand(command) {
+        const cmd = command.toLowerCase().trim();
+        const args = command.split(' ').filter(arg => arg.trim() !== '');
+        const mainCommand = args[0].toLowerCase();
+        
+        switch (mainCommand) {
+            case 'help':
+                showHelp();
+                break;
+            case 'cls':
+            case 'clear':
+                clearScreen();
+                break;
+            case 'dir':
+            case 'ls':
+                listDirectory();
+                break;
+            case 'cd':
+                changeDirectory(args[1]);
+                break;
+            case 'echo':
+                echoText(args.slice(1).join(' '));
+                break;
+            case 'date':
+                showDate();
+                break;
+            case 'time':
+                showTime();
+                break;
+            case 'ver':
+            case 'version':
+                showVersion();
+                break;
+            case 'color':
+                changeColor(args[1]);
+                break;
+            case 'systeminfo':
+                showSystemInfo();
+                break;
+            case 'exit':
+                closeTerminal();
+                break;
+            default:
+                appendOutput(`'${mainCommand}' 不是内部或外部命令，也不是可运行的程序或批处理文件。输入help获取可用命令`);
+                break;
+        }
+        
+        // 更新提示符
+        updatePrompt();
+    }
+    
+    // 更新提示符
+    function updatePrompt() {
+        const newPrompt = `${currentDir}>`;
+        cmdPrompt.textContent = newPrompt;
+    }
+    
+    // 显示帮助
+    function showHelp() {
+        appendOutput('可用命令：');
+        appendOutput('  help      - 显示帮助信息');
+        appendOutput('  cls       - 清除屏幕');
+        appendOutput('  dir       - 显示当前目录中的文件和子目录');
+        appendOutput('  cd        - 显示当前目录名或更改当前目录');
+        appendOutput('  echo      - 显示消息或启用/禁用命令回显');
+        appendOutput('  date      - 显示日期');
+        appendOutput('  time      - 显示时间');
+        appendOutput('  ver       - 显示版本信息');
+        appendOutput('  color     - 更改终端颜色');
+        appendOutput('  systeminfo - 显示系统信息');
+        appendOutput('  exit      - 退出命令提示符');
+    }
+    
+    // 清屏
+    function clearScreen() {
+        cmdOutput.innerHTML = '';
+    }
+    
+    // 列出目录内容（模拟）
+    function listDirectory() {
+        appendOutput(' 驱动器 C 中的卷没有标签。');
+        appendOutput(' 卷的序列号是 1234-5678');
+        appendOutput('');
+        appendOutput(` ${currentDir} 的目录`);
+        appendOutput('');
+        
+        if (currentDir === 'C:\\Users\\user') {
+            appendOutput('2023/09/01  09:30    <DIR>          Desktop');
+            appendOutput('2023/09/01  09:30    <DIR>          Documents');
+            appendOutput('2023/09/01  09:30    <DIR>          Downloads');
+            appendOutput('2023/09/01  09:30    <DIR>          Pictures');
+            appendOutput('2023/09/01  09:30    <DIR>          Music');
+            appendOutput('2023/09/01  09:30    <DIR>          Videos');
+        } else if (currentDir === 'C:\\Users\\user\\Desktop') {
+            appendOutput('2023/09/01  10:15            1,024 文档.txt');
+            appendOutput('2023/09/01  10:20    <DIR>          项目');
+            appendOutput('2023/09/01  10:25           10,240 报告.docx');
+        } else if (currentDir === 'C:\\Users\\user\\Documents') {
+            appendOutput('2023/09/02  14:30           15,360 工作计划.xlsx');
+            appendOutput('2023/09/02  15:40    <DIR>          个人');
+            appendOutput('2023/09/02  16:50            5,120 笔记.pdf');
+        } else {
+            appendOutput('文件夹为空');
+        }
+        
+        appendOutput('               5 个文件      31,744 字节');
+        appendOutput('               5 个目录 135,066,624 可用字节');
+    }
+    
+    // 改变目录
+    function changeDirectory(dir) {
+        if (!dir || dir === '.') {
+            appendOutput(currentDir);
+            return;
+        }
+        
+        if (dir === '..') {
+            // 上级目录
+            const parts = currentDir.split('\\');
+            if (parts.length > 2) { // 不允许超出C盘
+                parts.pop();
+                currentDir = parts.join('\\');
+            }
+            return;
+        }
+        
+        // 模拟目录导航
+        const validDirs = {
+            'C:\\Users\\user': ['Desktop', 'Documents', 'Downloads', 'Pictures', 'Music', 'Videos'],
+            'C:\\Users\\user\\Desktop': ['项目'],
+            'C:\\Users\\user\\Documents': ['个人']
+        };
+        
+        // 检查是否是绝对路径
+        if (dir.includes(':\\')) {
+            if (dir.startsWith('C:\\')) {
+                currentDir = dir;
+            } else {
+                appendOutput('系统找不到指定的驱动器。');
+            }
+            return;
+        }
+        
+        // 相对路径
+        if (validDirs[currentDir] && validDirs[currentDir].includes(dir)) {
+            currentDir = `${currentDir}\\${dir}`;
+        } else {
+            appendOutput('系统找不到指定的路径。');
+        }
+    }
+    
+    // 回显文本
+    function echoText(text) {
+        if (text) {
+            appendOutput(text);
+        } else {
+            appendOutput('回显处于开启状态。');
+        }
+    }
+    
+    // 显示日期
+    function showDate() {
+        const now = new Date();
+        const date = now.toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            weekday: 'long'
+        });
+        appendOutput(`当前日期: ${date}`);
+    }
+    
+    // 显示时间
+    function showTime() {
+        const now = new Date();
+        const time = now.toLocaleTimeString('zh-CN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        });
+        appendOutput(`当前时间: ${time}`);
+    }
+    
+    // 显示版本
+    function showVersion() {
+        appendOutput('Microsoft Windows [版本 10.0.19045]');
+        appendOutput('(c) Microsoft Corporation。保留所有权利。');
+    }
+    
+    // 改变终端颜色
+    function changeColor(colorCode) {
+        if (!colorCode) {
+            appendOutput('当前终端颜色设置为默认值');
+            return;
+        }
+        
+        const validCodes = {
+            '0': { bg: '#0c0c0c', fg: '#cccccc' },  // 黑底灰字
+            '1': { bg: '#0c0c0c', fg: '#0037DA' },  // 黑底蓝字
+            '2': { bg: '#0c0c0c', fg: '#13A10E' },  // 黑底绿字
+            '3': { bg: '#0c0c0c', fg: '#3A96DD' },  // 黑底青字
+            '4': { bg: '#0c0c0c', fg: '#C50F1F' },  // 黑底红字
+            '5': { bg: '#0c0c0c', fg: '#881798' },  // 黑底紫字
+            '6': { bg: '#0c0c0c', fg: '#C19C00' },  // 黑底黄字
+            '7': { bg: '#0c0c0c', fg: '#CCCCCC' },  // 黑底白字
+            'a': { bg: '#000000', fg: '#16C60C' }   // 黑底亮绿字
+        };
+        
+        if (validCodes[colorCode]) {
+            const { bg, fg } = validCodes[colorCode];
+            cmdWindow.style.backgroundColor = bg;
+            cmdWindow.style.color = fg;
+            cmdInput.style.color = fg;
+        } else {
+            appendOutput('错误的颜色代码。可用的颜色代码为 0-7 和 a。');
+        }
+    }
+    
+    // 显示系统信息
+    function showSystemInfo() {
+        appendOutput('主机名:           DESKTOP-USER');
+        appendOutput('OS 名称:          Microsoft Windows 10 专业版');
+        appendOutput('OS 版本:          10.0.19045 Build 19045');
+        appendOutput('OS 制造商:        Microsoft Corporation');
+        appendOutput('系统类型:         x64-based PC');
+        appendOutput('处理器:           Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz');
+        appendOutput('BIOS 版本:        American Megatrends Inc. 2.04, 2021/8/10');
+        appendOutput('内存总量:         16.0 GB');
+        appendOutput('可用物理内存:     8.2 GB');
+        appendOutput('虚拟内存: 最大值: 32.0 GB');
+        appendOutput('虚拟内存: 可用:   22.5 GB');
+    }
+    
+    // 关闭终端
+    function closeTerminal() {
+        cmdWindow.classList.remove('active');
+    }
+    
+    // 让终端可拖动
+    let isDragging = false;
+    let dragOffsetX, dragOffsetY;
+    
+    document.querySelector('.window-header').addEventListener('mousedown', function(e) {
+        if (cmdWindow.classList.contains('maximized')) return;
+        
+        isDragging = true;
+        dragOffsetX = e.clientX - cmdWindow.getBoundingClientRect().left;
+        dragOffsetY = e.clientY - cmdWindow.getBoundingClientRect().top;
+        
+        document.addEventListener('mousemove', moveWindow);
+        document.addEventListener('mouseup', stopDragging);
+    });
+    
+    function moveWindow(e) {
+        if (!isDragging) return;
+        
+        const x = e.clientX - dragOffsetX;
+        const y = e.clientY - dragOffsetY;
+        
+        // 限制窗口在可视区域内
+        const maxX = window.innerWidth - cmdWindow.offsetWidth;
+        const maxY = window.innerHeight - cmdWindow.offsetHeight;
+        
+        cmdWindow.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
+        cmdWindow.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+        cmdWindow.style.transform = 'none';
+    }
+    
+    function stopDragging() {
+        isDragging = false;
+        document.removeEventListener('mousemove', moveWindow);
+        document.removeEventListener('mouseup', stopDragging);
+    }
+    
+    // 设置命令提示符窗口的大小调整功能
+    const cmdContent = document.getElementById('cmdContent');
+    
+    // 确保输入框始终聚焦
+    cmdContent.addEventListener('click', function() {
+        cmdInput.focus();
+    });
+    
+    // 添加日历和世界时钟功能
 }); 

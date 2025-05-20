@@ -916,4 +916,125 @@ body.disable-mobile-optimize .search-box {
 
 .time {
     font-size: 14px;
+}
+
+/* 命令提示符终端窗口 */
+.cmd-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px;
+    height: 400px;
+    background-color: #0c0c0c;
+    color: #cccccc;
+    border-radius: 4px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+    display: none;
+    flex-direction: column;
+    z-index: 2000;
+    resize: both;
+    overflow: hidden;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.cmd-window.active {
+    display: flex;
+}
+
+.cmd-window.maximized {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transform: none;
+    border-radius: 0;
+}
+
+.window-header {
+    height: 32px;
+    background-color: #323232;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    cursor: move;
+}
+
+.window-title {
+    display: flex;
+    align-items: center;
+    color: #fff;
+    font-size: 14px;
+}
+
+.window-title i {
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+.window-controls {
+    display: flex;
+}
+
+.window-controls i {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.window-controls i:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.window-controls i.fa-times:hover {
+    background-color: #e81123;
+}
+
+.cmd-content {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.cmd-output {
+    white-space: pre-wrap;
+    margin-bottom: 10px;
+}
+
+.cmd-input-line {
+    display: flex;
+    align-items: baseline;
+}
+
+.cmd-prompt {
+    color: #cccccc;
+    margin-right: 4px;
+}
+
+#cmdInput {
+    background: transparent;
+    border: none;
+    color: #cccccc;
+    outline: none;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 14px;
+    flex: 1;
+    caret-color: #cccccc;
+}
+
+/* 移动设备适配 */
+@media (max-width: 768px) {
+    .cmd-window {
+        width: 90%;
+        height: 70%;
+    }
 } 
