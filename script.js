@@ -3,14 +3,60 @@ document.addEventListener('DOMContentLoaded', function() {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     
+    // 初始化主题颜色
+    initializeThemeColor();
+    
     // 应用移动设备优化
     if (isMobile) {
         applyMobileOptimizations();
         
-        // 显示移动设备指引（仅首次访问）
+        // 不显示移动设备指引
+        /* 已禁用首次访问指南
         const hasSeenGuide = localStorage.getItem('hasSeenMobileGuide');
         if (!hasSeenGuide) {
             showMobileGuide();
+        }
+        */
+        
+        // 直接设置为已查看过指南
+        localStorage.setItem('hasSeenMobileGuide', 'true');
+    }
+    
+    // 初始化主题颜色和任务栏透明度
+    function initializeThemeColor() {
+        // 设置默认主题颜色
+        const defaultColor = "#19191f";
+        const colorRgb = hexToRgb(defaultColor);
+        
+        // 获取保存的颜色或使用默认颜色
+        const savedColor = localStorage.getItem('themeColor') || defaultColor;
+        
+        // 激活对应的颜色选项
+        const colorOptions = document.querySelectorAll('.color-option');
+        colorOptions.forEach(option => {
+            if(option.getAttribute('data-color') === savedColor) {
+                option.classList.add('active');
+            }
+        });
+        
+        // 应用颜色
+        document.documentElement.style.setProperty('--theme-color', savedColor);
+        document.querySelectorAll('#changeBackgroundBtn, input:checked + .slider').forEach(el => {
+            el.style.backgroundColor = savedColor;
+        });
+        document.querySelectorAll('.settings-section h3').forEach(el => {
+            el.style.color = savedColor;
+        });
+        
+        // 应用任务栏颜色和透明度
+        if(document.getElementById('transparencyToggle') && document.getElementById('transparencyToggle').checked) {
+            const colorRgb = hexToRgb(savedColor);
+            if(colorRgb) {
+                document.querySelector('.taskbar').style.backgroundColor = `rgba(${colorRgb.r}, ${colorRgb.g}, ${colorRgb.b}, 0.7)`;
+                document.querySelector('.taskbar').style.backdropFilter = 'blur(10px)';
+            }
+        } else {
+            document.querySelector('.taskbar').style.backgroundColor = savedColor;
         }
     }
     
@@ -220,12 +266,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // 透明效果开关
     transparencyToggle.addEventListener('change', function() {
         if (this.checked) {
-            document.querySelector('.taskbar').style.backgroundColor = 'rgba(25, 25, 35, 0.85)';
+            // 增加透明度
+            document.querySelector('.taskbar').style.backgroundColor = 'rgba(25, 25, 35, 0.7)';
             document.querySelector('.taskbar').style.backdropFilter = 'blur(10px)';
-            document.querySelector('.start-menu').style.backgroundColor = 'rgba(25, 25, 35, 0.95)';
+            document.querySelector('.start-menu').style.backgroundColor = 'rgba(25, 25, 35, 0.85)';
             document.querySelector('.start-menu').style.backdropFilter = 'blur(20px)';
-            document.querySelector('.settings-panel').style.backgroundColor = 'rgba(25, 25, 35, 0.95)';
+            document.querySelector('.settings-panel').style.backgroundColor = 'rgba(25, 25, 35, 0.85)';
             document.querySelector('.settings-panel').style.backdropFilter = 'blur(20px)';
+            
+            // 如果有活动的主题颜色，应用颜色
+            const activeColor = document.querySelector('.color-option.active');
+            if (activeColor) {
+                const color = activeColor.getAttribute('data-color');
+                const colorRgb = hexToRgb(color);
+                if (colorRgb) {
+                    document.querySelector('.taskbar').style.backgroundColor = `rgba(${colorRgb.r}, ${colorRgb.g}, ${colorRgb.b}, 0.7)`;
+                }
+            }
         } else {
             document.querySelector('.taskbar').style.backgroundColor = 'rgb(25, 25, 35)';
             document.querySelector('.taskbar').style.backdropFilter = 'none';
@@ -233,6 +290,13 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('.start-menu').style.backdropFilter = 'none';
             document.querySelector('.settings-panel').style.backgroundColor = 'rgb(25, 25, 35)';
             document.querySelector('.settings-panel').style.backdropFilter = 'none';
+            
+            // 如果有活动的主题颜色，应用不透明颜色
+            const activeColor = document.querySelector('.color-option.active');
+            if (activeColor) {
+                const color = activeColor.getAttribute('data-color');
+                document.querySelector('.taskbar').style.backgroundColor = color;
+            }
         }
     });
     
@@ -256,6 +320,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // 为当前选择的颜色添加active类
             this.classList.add('active');
             
+            // 保存颜色到localStorage
+            localStorage.setItem('themeColor', color);
+            
             // 应用颜色到相关元素
             document.documentElement.style.setProperty('--theme-color', color);
             document.querySelectorAll('#changeBackgroundBtn, input:checked + .slider').forEach(el => {
@@ -264,8 +331,28 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.settings-section h3').forEach(el => {
                 el.style.color = color;
             });
+
+            // 同步更改任务栏颜色
+            const colorRgb = hexToRgb(color);
+            if (colorRgb) {
+                if (transparencyToggle.checked) {
+                    document.querySelector('.taskbar').style.backgroundColor = `rgba(${colorRgb.r}, ${colorRgb.g}, ${colorRgb.b}, 0.7)`;
+                } else {
+                    document.querySelector('.taskbar').style.backgroundColor = color;
+                }
+            }
         });
     });
+    
+    // 转换十六进制颜色为RGB
+    function hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    }
     
     // 添加应用项点击事件
     document.querySelectorAll('.app-item').forEach(function(appItem) {
@@ -623,11 +710,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 添加CSS变量来控制主题和动画
-    document.documentElement.style.setProperty('--theme-color', '#0078d7');
+    document.documentElement.style.setProperty('--theme-color', '#19191f');
     document.documentElement.style.setProperty('--transition-speed', '0.3s');
     
-    // 默认选中第一个颜色选项
-    colorOptions[0].classList.add('active');
+    // 默认选中第一个颜色选项（黑色）
+    if(colorOptions.length > 0) {
+        colorOptions[0].classList.add('active');
+    }
     
     // 监听屏幕方向变化，调整布局
     window.addEventListener('orientationchange', function() {
