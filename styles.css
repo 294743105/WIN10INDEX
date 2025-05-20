@@ -654,6 +654,7 @@ input:checked + .slider:before {
     /* 增大点击区域 */
     .icon, .app-item, .start-button, .taskbar-icons i, .time-date {
         min-height: 44px; /* 苹果推荐的最小触摸区域高度 */
+        touch-action: pan-x pan-y; /* 允许滚动但阻止缩放 */
     }
     
     /* 替换悬停效果为点击效果 */
@@ -678,6 +679,20 @@ input:checked + .slider:before {
     .icon:active .tooltip {
         opacity: 1;
         visibility: visible;
+    }
+    
+    /* 防止图标意外移动 */
+    .icon {
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* 防止文本选择 */
+    .icon span {
+        user-select: none;
+        -webkit-user-select: none;
     }
 }
 

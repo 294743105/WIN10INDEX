@@ -726,12 +726,15 @@ document.addEventListener('DOMContentLoaded', function() {
             // 触摸设备使用触摸事件
             let startX, startY, initialLeft, initialTop;
             let isDragging = false;
+            let touchStartTime = 0;
+            let hasMoved = false;
+            const DRAG_THRESHOLD = 10; // 拖动阈值，防止误触
             
             icon.addEventListener('touchstart', function(e) {
                 if (e.touches.length === 1) {
+                    touchStartTime = Date.now();
+                    hasMoved = false;
                     const touch = e.touches[0];
-                    draggedIcon = this;
-                    this.style.opacity = '0.8';
                     
                     // 记录起始位置
                     startX = touch.clientX;
@@ -741,47 +744,63 @@ document.addEventListener('DOMContentLoaded', function() {
                     const rect = this.getBoundingClientRect();
                     initialLeft = rect.left;
                     initialTop = rect.top;
-                    
-                    // 让元素可以绝对定位
-                    this.style.position = 'absolute';
-                    this.style.left = initialLeft + 'px';
-                    this.style.top = initialTop + 'px';
                 }
             });
             
             icon.addEventListener('touchmove', function(e) {
-                if (draggedIcon && e.touches.length === 1) {
-                    e.preventDefault(); // 防止滚动
-                    isDragging = true;
-                    
+                if (e.touches.length === 1) {
                     const touch = e.touches[0];
                     const deltaX = touch.clientX - startX;
                     const deltaY = touch.clientY - startY;
                     
-                    // 移动图标
-                    let newLeft = Math.max(0, Math.min(initialLeft + deltaX, window.innerWidth - this.offsetWidth));
-                    let newTop = Math.max(0, Math.min(initialTop + deltaY, window.innerHeight - 50 - this.offsetHeight));
-                    
-                    this.style.left = newLeft + 'px';
-                    this.style.top = newTop + 'px';
+                    // 只有超过阈值才认为是拖动
+                    if (Math.abs(deltaX) > DRAG_THRESHOLD || Math.abs(deltaY) > DRAG_THRESHOLD) {
+                        hasMoved = true;
+                        
+                        // 只有长按才能拖动（超过300ms）
+                        if (Date.now() - touchStartTime > 300) {
+                            e.preventDefault(); // 防止滚动
+                            isDragging = true;
+                            
+                            if (!draggedIcon) {
+                                draggedIcon = this;
+                                this.style.opacity = '0.8';
+                                // 让元素可以绝对定位
+                                this.style.position = 'absolute';
+                                this.style.left = initialLeft + 'px';
+                                this.style.top = initialTop + 'px';
+                                this.style.zIndex = '1000';
+                            }
+                            
+                            // 移动图标
+                            let newLeft = Math.max(0, Math.min(initialLeft + deltaX, window.innerWidth - this.offsetWidth));
+                            let newTop = Math.max(0, Math.min(initialTop + deltaY, window.innerHeight - 50 - this.offsetHeight));
+                            
+                            this.style.left = newLeft + 'px';
+                            this.style.top = newTop + 'px';
+                        }
+                    }
                 }
             });
             
             icon.addEventListener('touchend', function(e) {
+                const touchDuration = Date.now() - touchStartTime;
+                
                 if (draggedIcon) {
                     this.style.opacity = '1';
-                    
-                    if (!isDragging) {
-                        // 如果没有拖动，则触发点击事件
-                        const url = this.getAttribute('data-url');
-                        if (url) {
-                            window.open(url, '_blank');
-                        }
-                    }
-                    
-                    isDragging = false;
+                    this.style.zIndex = '';
                     draggedIcon = null;
                 }
+                
+                // 如果是短触摸且没有移动，则视为点击
+                if (touchDuration < 300 && !hasMoved) {
+                    const url = this.getAttribute('data-url');
+                    if (url) {
+                        window.open(url, '_blank');
+                    }
+                }
+                
+                isDragging = false;
             });
         } else {
             // 非触摸设备使用传统拖放
