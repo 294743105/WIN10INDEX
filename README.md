@@ -39,54 +39,6 @@
 
 9. 等待部署完成后，Cloudflare会提供一个URL供访问您的个人主页
 
-### 方法二：使用Cloudflare Workers部署
-
-1. 登录您的Cloudflare账户
-
-2. 进入"Workers"部分
-
-3. 点击"创建Worker"
-
-4. 在编辑界面中，使用以下代码（将内容替换为您的文件内容）：
-
-```js
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
-})
-
-async function handleRequest(request) {
-  const url = new URL(request.url)
-  
-  if (url.pathname === '/' || url.pathname === '/index.html') {
-    return new Response(`<!DOCTYPE html>
-    <!-- 这里粘贴您的index.html内容 -->
-    `, {
-      headers: { 'Content-Type': 'text/html' },
-    })
-  } 
-  else if (url.pathname === '/styles.css') {
-    return new Response(`
-    /* 这里粘贴您的styles.css内容 */
-    `, {
-      headers: { 'Content-Type': 'text/css' },
-    })
-  }
-  else if (url.pathname === '/script.js') {
-    return new Response(`
-    // 这里粘贴您的script.js内容
-    `, {
-      headers: { 'Content-Type': 'application/javascript' },
-    })
-  }
-  
-  return new Response('Not Found', { status: 404 })
-}
-```
-
-5. 点击"保存并部署"
-
-6. 点击"触发器"，添加自定义域名（可选）
-
 ## 自定义指南
 
 - 修改`index.html`中的图标和链接信息
